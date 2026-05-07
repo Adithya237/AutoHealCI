@@ -19,19 +19,31 @@ if "COMPILATION ERROR" in logs:
 
     for line in lines:
 
-        # Auto-fix missing semicolon
-        if 'System.out.println("AutoHealCI Test")' in line and ';' not in line:
-            line = line.strip() + ';\n'
-            print("Missing semicolon fixed automatically")
+        # Detect println without semicolon
+        if "System.out.println" in line and ";" not in line:
+
+            print("Missing semicolon detected")
+            line = line.rstrip() + ";\n"
+
+            print("Semicolon added automatically")
 
         fixed_lines.append(line)
 
+    # Rewrite corrected file
     with open(java_file, "w") as file:
         file.writelines(fixed_lines)
 
     print("Retrying Maven build...")
 
-    os.system("cd sample-java-app/sampleapp && mvn clean install")
+    result = os.system(
+        "cd sample-java-app/sampleapp && mvn clean install"
+    )
+
+    if result == 0:
+        print("Build healed successfully!")
+
+    else:
+        print("Healing attempt failed")
 
 else:
 
