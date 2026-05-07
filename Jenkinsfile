@@ -21,10 +21,11 @@ pipeline {
 
                             echo "Build failed. Starting self-healing..."
 
-                            sh 'python3 healer/analyze_logs.py'
+                            sh 'cd ../.. && python3 healer/analyze_logs.py'
 
-                            // Retry after healing
-                            sh 'cd sample-java-app/sampleapp && mvn clean install'
+                            echo "Retrying build after healing..."
+
+                            sh 'mvn clean install'
                         }
                     }
                 }

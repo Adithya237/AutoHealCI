@@ -19,17 +19,20 @@ if "COMPILATION ERROR" in logs:
 
     for line in lines:
 
-        # Detect println without semicolon
-        if "System.out.println" in line and ";" not in line:
+        if "System.out.println" in line:
 
-            print("Missing semicolon detected")
-            line = line.rstrip() + ";\n"
+            stripped = line.strip()
 
-            print("Semicolon added automatically")
+            if not stripped.endswith(";"):
+
+                print("Missing semicolon detected")
+
+                line = line.rstrip() + ";\n"
+
+                print("Semicolon added automatically")
 
         fixed_lines.append(line)
 
-    # Rewrite corrected file
     with open(java_file, "w") as file:
         file.writelines(fixed_lines)
 
