@@ -10,19 +10,25 @@ pipeline {
 
                 dir('sample-java-app/sampleapp') {
 
-                    sh 'mvn clean install > ../../build.log'
+                    script {
 
+                        def status = sh(
+                            script: 'mvn clean install > ../../build.log 2>&1',
+                            returnStatus: true
+                        )
+
+                        if (status != 0) {
+
+                            echo "Build failed. Starting self-healing..."
+
+                            sh 'python3 healer/analyze_logs.py'
+
+                            // Retry after healing
+                            sh 'cd sample-java-app/sampleapp && mvn clean install'
+                        }
+                    }
                 }
             }
-        }
-    }
-
-    post {
-
-        failure {
-
-            sh 'python3 healer/analyze_logs.py'
-
         }
     }
 }
