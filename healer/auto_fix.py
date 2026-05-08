@@ -19,9 +19,19 @@ if "COMPILATION ERROR" in logs:
 
     for line in lines:
 
+    # Fix extra colon after semicolon
+        if ");:" in line:
+
+            print("Extra colon detected")
+
+            line = line.replace(");:", ");")
+
+            print("Extra colon removed automatically")
+
+    # Fix missing semicolon
         if "System.out.println" in line:
 
-            stripped = line.strip()
+                stripped = line.strip()
 
             if not stripped.endswith(";"):
 
